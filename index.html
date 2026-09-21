@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Supervisor dashboard for RF stock transfers." />
+    <meta name="theme-color" content="#07111f" />
+    <title>RF Scanner Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">WAREHOUSE OPERATIONS</p>
+        <h1>Transfer Dashboard</h1>
+      </div>
+      <a class="scanner-link" href="https://dakshal72-commits.github.io/RF-Scanner/">Open scanner</a>
+    </header>
+
+    <main class="dashboard-shell">
+      <section class="dashboard-heading">
+        <div>
+          <p class="eyebrow">SUPERVISOR VIEW</p>
+          <h2>Stock movement overview</h2>
+          <p id="last-updated" class="muted">Loading current warehouse activity…</p>
+        </div>
+        <div class="controls">
+          <label for="period">Reporting period</label>
+          <select id="period">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="0">All time</option>
+          </select>
+          <button id="refresh" type="button">Refresh</button>
+        </div>
+      </section>
+
+      <div id="error" class="error" hidden></div>
+
+      <section class="metrics" aria-label="Transfer metrics">
+        <article class="metric-card"><span>Completed transfers</span><strong id="total-transfers">—</strong><small>Successfully synced moves</small></article>
+        <article class="metric-card"><span>Units moved</span><strong id="units-moved">—</strong><small>Across all transfer lines</small></article>
+        <article class="metric-card"><span>Most moved SKU</span><strong id="top-sku">—</strong><small id="top-sku-detail">No movement recorded</small></article>
+        <article class="metric-card alert-card"><span>Low-stock positions</span><strong id="low-stock-count">—</strong><small>Locations with 10 units or fewer</small></article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">MOVEMENT</p><h3>Top SKUs</h3></div></div>
+          <div id="sku-chart" class="bar-list"></div>
+        </article>
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">ROUTES</p><h3>Busiest transfer paths</h3></div></div>
+          <div id="route-list" class="rank-list"></div>
+        </article>
+      </section>
+
+      <section class="dashboard-grid lower-grid">
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow warning">ATTENTION</p><h3>Low-stock locations</h3></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Bin</th><th>SKU</th><th class="number">Available</th></tr></thead>
+              <tbody id="low-stock-table"></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel recent-panel">
+          <div class="panel-heading"><div><p class="eyebrow">AUDIT TRAIL</p><h3>Recent transfers</h3></div></div>
+          <div id="recent-transfers" class="recent-list"></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
