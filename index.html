@@ -6,7 +6,7 @@
     <meta name="description" content="Supervisor dashboard for RF stock transfers." />
     <meta name="theme-color" content="#07111f" />
     <title>RF Scanner Dashboard</title>
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=offline-conflicts-1" />
   </head>
   <body>
     <header class="topbar">
@@ -44,6 +44,12 @@
         <article class="metric-card alert-card"><span>Low-stock positions</span><strong id="low-stock-count">—</strong><small>Locations with 10 units or fewer</small></article>
       </section>
 
+      <section class="panel conflict-panel" aria-labelledby="conflict-title">
+        <div class="panel-heading"><div><p class="eyebrow warning">NEEDS ATTENTION</p><h3 id="conflict-title">Offline transfer conflicts <span id="conflict-count" class="conflict-count">0</span></h3></div></div>
+        <p class="muted">These moves were saved on a scanner but rejected when it reconnected. Check the source stock and correct it before retrying on that scanner.</p>
+        <div id="conflict-list" class="recent-list"></div>
+      </section>
+
       <section class="dashboard-grid">
         <article class="panel">
           <div class="panel-heading"><div><p class="eyebrow">MOVEMENT</p><h3>Top SKUs</h3></div></div>
@@ -73,6 +79,6 @@
     </main>
 
     <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script src="app.js?v=offline-conflicts-1"></script>
   </body>
 </html>

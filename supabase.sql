@@ -36,6 +36,13 @@ with filtered as (
   where quantity <= 10
   order by quantity, bin_id, sku
   limit 20
+), open_conflicts as (
+  select c.client_id, c.reference, c.source_bin, c.destination_bin, c.items, c.reason, c.detected_at
+  from public.stock_transfer_conflicts as c
+  where not exists (select 1 from public.stock_transfers as t where t.client_id = c.client_id)
+  order by c.detected_at desc
+), recent_conflicts as (
+  select * from open_conflicts limit 20
 )
 select jsonb_build_object(
   'totalTransfers', (select count(*) from filtered),
@@ -43,7 +50,9 @@ select jsonb_build_object(
   'topSkus', coalesce((select jsonb_agg(jsonb_build_object('sku', sku, 'units', units) order by units desc, sku) from top_skus), '[]'::jsonb),
   'routes', coalesce((select jsonb_agg(jsonb_build_object('source', source, 'destination', destination, 'transfers', transfers) order by transfers desc, source, destination) from routes), '[]'::jsonb),
   'recent', coalesce((select jsonb_agg(jsonb_build_object('reference', reference, 'source', source, 'destination', destination, 'items', items, 'completedAt', completed_at) order by completed_at desc) from recent), '[]'::jsonb),
-  'lowStock', coalesce((select jsonb_agg(jsonb_build_object('bin', bin, 'sku', sku, 'quantity', quantity) order by quantity, bin, sku) from low_stock), '[]'::jsonb)
+  'lowStock', coalesce((select jsonb_agg(jsonb_build_object('bin', bin, 'sku', sku, 'quantity', quantity) order by quantity, bin, sku) from low_stock), '[]'::jsonb),
+  'conflictCount', (select count(*) from open_conflicts),
+  'conflicts', coalesce((select jsonb_agg(jsonb_build_object('reference', reference, 'source', source_bin, 'destination', destination_bin, 'items', items, 'reason', reason, 'detectedAt', detected_at) order by detected_at desc) from recent_conflicts), '[]'::jsonb)
 );
 $$;
 

@@ -49,6 +49,7 @@ function renderDashboard(data) {
   $("#top-sku").textContent = topSku?.sku || "—";
   $("#top-sku-detail").textContent = topSku ? `${number(topSku.units)} units moved` : "No movement recorded";
   $("#low-stock-count").textContent = number(data.lowStock?.length);
+  $("#conflict-count").textContent = number(data.conflictCount);
   $("#last-updated").textContent = `Updated ${new Date().toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
 
   const maxUnits = Math.max(...topSkus.map((item) => Number(item.units)), 1);
@@ -69,6 +70,13 @@ function renderDashboard(data) {
       <summary><span><strong>${escapeHtml(transfer.reference)}</strong><small>${escapeHtml(transfer.source)} → ${escapeHtml(transfer.destination)}</small></span><time>${new Date(transfer.completedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</time></summary>
       <ul>${(transfer.items || []).map((item) => `<li><strong>${escapeHtml(item.sku)}</strong><span>Qty ${number(item.quantity)}</span></li>`).join("")}</ul>
     </details>`).join("") : emptyState("No completed transfers in this period.");
+
+  $("#conflict-list").innerHTML = data.conflicts?.length ? data.conflicts.map((conflict) => `
+    <details class="transfer-row">
+      <summary><span><strong>${escapeHtml(conflict.reference)}</strong><small>${escapeHtml(conflict.source)} → ${escapeHtml(conflict.destination)}</small></span><time>${new Date(conflict.detectedAt).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}</time></summary>
+      <p class="conflict-reason">${escapeHtml(conflict.reason)}</p>
+      <ul>${(conflict.items || []).map((item) => `<li><strong>${escapeHtml(item.sku)}</strong><span>Qty ${number(item.quantity)}</span></li>`).join("")}</ul>
+    </details>`).join("") : emptyState("No open transfer conflicts.");
 }
 
 function emptyState(message) {
